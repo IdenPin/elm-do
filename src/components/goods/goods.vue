@@ -31,7 +31,7 @@
                   <span class="old" v-show="food.oldPrice">¥{{food.oldPrice}}</span>
                 </div>
                 <div class="cartcontrol-wrapper">
-                  <cartcontrol :food="food"></cartcontrol>
+                  <cartcontrol @add="addFood" :food="food"></cartcontrol>
                 </div>
               </div>
             </li>
@@ -135,6 +135,9 @@ export default {
       }
       this.selectedFood = food
       this.$refs.food.show()
+    },
+    addFood(target) {
+        // this._drop(target);
     }
   },
   components: {

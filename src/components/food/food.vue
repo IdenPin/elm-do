@@ -21,7 +21,7 @@
             <span class="old" v-show="food.oldPrice">¥{{food.oldPrice}}</span>
           </div>
           <div class="cartcontrol-wrapper">
-            <cartcontrol :food="food"></cartcontrol>
+            <cartcontrol @add="addFood" :food="food"></cartcontrol>
           </div>
           <div class="buy" v-show="!food.count || food.count === 0" @click="addFirst($event)">
             加入购物车
@@ -37,7 +37,31 @@
         <split></split>
         <div class="rating">
           <h1 class="title">商品评价</h1>
-          <ratingselect :ratings="food.ratings" :selectType="selectType" :onlyContent="onlyContent" :desc="desc"></ratingselect>
+          <ratingselect
+            @select = "selectRating"
+            @toggle = "toggleContent"
+            :ratings="food.ratings"
+            :select-type="selectType"
+            :only-content="onlyContent"
+            :desc="desc">
+          </ratingselect>
+          <div class="rating-wrapper">
+            <ul v-show="food.ratings && food.ratings.length">
+              <li v-show="needShow(rating.rateType,rating.text)" v-for="rating in food.ratings" class="rating-item">
+                  <div class="user">
+                    <span class="name">{{rating.username}}</span>
+                    <img :src="rating.avatar" height="12" width="12">
+                  </div>
+                  <div class="time">
+                    {{rating.rateTime | formatDate}}
+                  </div>
+                  <p class="text">
+                    <span :class="{'icon-thumb_up':rating.rateType === 0,'icon-thumb_down':rating.rateType === 1}">{{rating.text}}</span>
+                  </p>
+              </li>
+            </ul>
+            <div class="no-rating" v-show="!food.ratings || !food.ratings.length">暂无评价</div>
+          </div>
         </div>
       </div>
   </div>
@@ -50,7 +74,7 @@
   import cartcontrol from '../cartcontrol/cartcontrol'
   import split from '../split/split'
   import ratingselect from '../ratingselect/ratingselect'
-
+  import {formatDate} from '../../common/js/date'
   // const POSITIVE = 0
   // const NEGATIVE = 1
   const ALL = 2
@@ -89,6 +113,9 @@
           }
         })
       },
+      addFood(target) {
+        this.$emit('add', target)
+      },
       hide() {
         this.showFlag = false
       },
@@ -97,6 +124,34 @@
           return false
         }
         Vue.set(this.food, 'count', 1)
+      },
+      selectRating(type) {
+        this.selectType = type
+        this.$nextTick(() => {
+          this.scroll.refresh()
+        })
+      },
+      toggleContent() {
+        this.onlyContent = !this.onlyContent
+        this.$nextTick(() => {
+          this.scroll.refresh()
+        })
+      },
+      needShow(type, text) {
+        if (this.onlyContent && !text) {
+          return false
+        }
+        if (this.selectType === ALL) {
+          return true
+        } else {
+          return type === this.selectType
+        }
+      }
+    },
+    filters: {
+      formatDate(time) {
+        let date = new Date(time)
+        return formatDate(date, 'yyyy-MM-dd hh:mm')
       }
     },
     components: {
@@ -232,6 +287,44 @@
         margin-left: 18px;
         font-size: 14px;
         color: #07111b;
+      }
+      .rating-wrapper {
+        padding: 0 18px;
+        .rating-item {
+          position: relative;
+          padding: 16px 0;
+          position: relative;
+          .user {
+            position: absolute;
+            right: 0;
+            top: 16px;
+            line-height: 12px;
+            font-size: 0;
+          }
+          .time {
+            margin-bottom: 6px;
+            line-height: 12px;
+            font-size: 10px;
+            color: #93999f;
+          }
+          .text {
+            line-height: 16px;
+            font-size: 12px;
+            color: #07111b;
+            .icon-thumb_up {
+              color: #00a0dc;
+            }
+            .icon-thumb_down {
+              color: #93999f;
+            }
+          }
+        }
+        .no-rating {
+          padding: 16px 0;
+          font-size: 12px;
+          color: #93999f;
+          margin-bottom: 50px;
+        }
       }
     }
   }

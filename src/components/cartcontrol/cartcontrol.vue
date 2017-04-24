@@ -21,7 +21,7 @@ export default {
     }
   },
   methods: {
-    addCart() {
+    addCart(event) {
       if (!event._constructed) {
         return false
       }
@@ -32,6 +32,7 @@ export default {
         Vue.set(this.food, 'count', 1)
         this.food.count++
       }
+      this.$emit('add', event.target)
     },
     decreaseCart() {
       if (!event._constructed) {
@@ -48,7 +49,8 @@ export default {
 <style lang="scss">
 .cartcontrol {
     font-size: 0;
-    .cart-decrease,.cart-add {
+    .cart-add,
+    .cart-decrease {
         display: inline-block;
         padding: 6px;
         transition: all 0.4s linear;
