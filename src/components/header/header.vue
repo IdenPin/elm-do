@@ -15,7 +15,7 @@
           {{seller.description}}/{{seller.deliveryTime}}分钟送达
         </div>
         <div v-if="seller.supports" class="support">
-          <span class="icon"></span>
+          <span class="icon" :class="classMap[seller.supports[0].type]"></span>
           <span class="text">{{seller.supports[0].description}}</span>
         </div>
       </div>
@@ -94,6 +94,33 @@ export default {
     showDetail() {
       this.detailShow = !this.detailShow
     }
+  },
+  created() {
+    this.classMap = ['decrease', 'discount', 'special', 'invoice', 'guarantee']
+  },
+  filters: {
+    iconType(v) {
+      let classType
+      switch (v) {
+        case 0:
+          classType = 'decrease'
+          break
+        case 1:
+          classType = 'discount'
+          break
+        case 2:
+          classType = 'guarantee'
+          break
+        case 3:
+          classType = 'invoice'
+          break
+        case 4:
+          classType = 'special'
+          break
+        default:
+      }
+      return classType
+    }
   }
 }
 </script>
@@ -140,6 +167,26 @@ export default {
             }
             .support {
                 font-size: 12px;
+                .icon {
+                    display: inline-block;
+                    vertical-align: top;
+                    width: 12px;
+                    height: 12px;
+                    margin-right: 4px;
+                    background-repeat: no-repeat;
+                    &.decrease {
+                        @include bg-image ('decrease_1',12px,12px);
+                    }
+                    &.special {
+                      @include bg-image ('special_1',12px,12px);
+                    }
+                    &.invoice {
+                      @include bg-image ('invoice_1',12px,12px);
+                    }
+                    &.guarantee {
+                      @include bg-image ('guarantee_1',12px,12px);
+                    }
+                }
             }
         }
         .support-count {

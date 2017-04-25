@@ -4,7 +4,7 @@
       <ul>
         <li v-for="(v,index) in goods" class="menu-item" :class="{'current':currentIndex==index}" @click="selectMenu(index,$event)">
           <span class="text border-1px">
-            <span v-if="v.type>0" class="icon"></span>
+            <span v-if="v.type>0" class="icon" :class="classMap[v.type]"></span>
             {{v.name}}
           </span>
         </li>
@@ -88,6 +88,7 @@ export default {
     }
   },
   created() {
+    this.classMap = ['decrease', 'discount', 'special', 'invoice', 'guarantee']
     this.$http.get('/api/goods').then((res) => {
       if (res.body.errno === ERR_OK) {
         this.goods = res.body.data
@@ -137,7 +138,7 @@ export default {
       this.$refs.food.show()
     },
     addFood(target) {
-        // this._drop(target);
+      // this._drop(target);
     }
   },
   components: {
@@ -175,6 +176,29 @@ export default {
                 font-weight: 200;
                 white-space: normal;
                 @include border-1px(rgba(7, 17, 27, 0.1));
+                .icon {
+                    display: inline-block;
+                    vertical-align: top;
+                    width: 12px;
+                    height: 12px;
+                    margin-right: 4px;
+                    background-repeat: no-repeat;
+                    &.decrease {
+                        @include bg-image( 'decrease_3',12px,12px);
+                    }
+                    &.discount {
+                        @include bg-image( 'discount_3',12px,12px);
+                    }
+                    &.special {
+                        @include bg-image( 'special_3',12px,12px);
+                    }
+                    &.invoice {
+                        @include bg-image( 'invoice_3',12px,12px);
+                    }
+                    &.guarantee {
+                        @include bg-image( 'guarantee_3',12px,12px);
+                    }
+                }
             }
         }
         .current {
