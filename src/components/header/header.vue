@@ -6,9 +6,7 @@
       </div>
       <div class="content">
         <div class="title">
-          <span class="brand">
-
-          </span>
+          <span class="brand"></span>
           <span class="name">{{seller.name}}</span>
         </div>
         <div class="discription">
@@ -35,30 +33,22 @@
       <img :src="seller.avatar" height="100%" width="100%">
     </div>
 
-
     <!-- seller-detail -->
     <div class="detail" v-show="detailShow">
       <div class="detail-wrapper clearfix">
         <div class="detail-main">
           <h1 class="name">粥品香坊（回龙观）</h1>
           <div class="star-wrapper">
-            <div class="star star-48">
-              <span track-by="$index" class="star-item on">
-              </span><span track-by="$index" class="star-item on">
-              </span><span track-by="$index" class="star-item on">
-              </span><span track-by="$index" class="star-item on">
-              </span><span track-by="$index" class="star-item off">
-              </span>
-            </div>
+            <star :size="48" :score="seller.score"></star>
           </div>
           <div class="title">
             <div class="line"></div>
             <div class="text">优惠信息</div>
             <div class="line"></div>
           </div>
-          <ul class="supports" v-for="(v,i) in seller.supports">
-            <li class="support-item">
-              <span class="icon decrease">{{v.type}}</span>
+          <ul class="supports">
+            <li class="support-item" v-for="(v,i) in seller.supports">
+              <span class="icon" :class="classMap[v.type]"></span>
               <span class="text">{{v.description}}</span>
             </li>
           </ul>
@@ -79,6 +69,7 @@
 </template>
 
 <script>
+import star from '../star/star'
 export default {
   props: {
     seller: {
@@ -87,7 +78,7 @@ export default {
   },
   data() {
     return {
-      detailShow: false
+      detailShow: !false
     }
   },
   methods: {
@@ -98,29 +89,8 @@ export default {
   created() {
     this.classMap = ['decrease', 'discount', 'special', 'invoice', 'guarantee']
   },
-  filters: {
-    iconType(v) {
-      let classType
-      switch (v) {
-        case 0:
-          classType = 'decrease'
-          break
-        case 1:
-          classType = 'discount'
-          break
-        case 2:
-          classType = 'guarantee'
-          break
-        case 3:
-          classType = 'invoice'
-          break
-        case 4:
-          classType = 'special'
-          break
-        default:
-      }
-      return classType
-    }
+  components: {
+    star
   }
 }
 </script>
@@ -175,16 +145,19 @@ export default {
                     margin-right: 4px;
                     background-repeat: no-repeat;
                     &.decrease {
-                        @include bg-image ('decrease_1',12px,12px);
+                        @include bg-image( 'decrease_1',12px,12px);
+                    }
+                    &.discount {
+                        @include bg-image( 'discount_1',12px,12px);
                     }
                     &.special {
-                      @include bg-image ('special_1',12px,12px);
+                        @include bg-image( 'special_1',12px,12px);
                     }
                     &.invoice {
-                      @include bg-image ('invoice_1',12px,12px);
+                        @include bg-image( 'invoice_1',12px,12px);
                     }
                     &.guarantee {
-                      @include bg-image ('guarantee_1',12px,12px);
+                        @include bg-image( 'guarantee_1',12px,12px);
                     }
                 }
             }
@@ -283,6 +256,12 @@ export default {
                 line-height: 16px;
                 text-align: center;
             }
+            .star-wrapper {
+                width: 100%;
+                text-align: center;
+                margin-top: 16px;
+                margin-bottom: 25px;
+            }
         }
         .title {
             display: flex;
@@ -313,6 +292,29 @@ export default {
                     color: #fff;
                     line-height: 12px;
                 }
+                .icon {
+                    display: inline-block;
+                    vertical-align: middle;
+                    width: 12px;
+                    height: 12px;
+                    margin-right: 4px;
+                    background-repeat: no-repeat;
+                    &.decrease {
+                        @include bg-image( 'decrease_1',12px,12px);
+                    }
+                    &.discount {
+                        @include bg-image( 'discount_1',12px,12px);
+                    }
+                    &.special {
+                        @include bg-image( 'special_1',12px,12px);
+                    }
+                    &.invoice {
+                        @include bg-image( 'invoice_1',12px,12px);
+                    }
+                    &.guarantee {
+                        @include bg-image( 'guarantee_1',12px,12px);
+                    }
+                }
             }
 
         }
@@ -323,7 +325,6 @@ export default {
             color: #fff;
             line-height: 24px;
             .content {
-                padding: 0 12px;
                 line-height: 24px;
                 font-size: 12px;
             }
