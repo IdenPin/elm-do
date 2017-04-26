@@ -8,7 +8,24 @@
           <div class="rank">高于周边商家89%</div>
         </div>
         <div class="overview-right">
-          评级
+          <div class="rate-li">
+            <div class="right-label">服务态度</div>
+            <star :size="24" :score="seller.score"></star>
+            <span class="text">{{seller.score}}</span>
+          </div>
+          <div class="rate-li">
+            <div class="right-label">服务态度</div>
+            <star :size="24" :score="seller.foodScore"></star>
+            <span class="text">{{seller.score}}</span>
+          </div>
+          <div class="rate-li">
+            <div class="right-label">
+              送达时间
+            </div>
+            <div class="delivery-time">
+              {{seller.deliveryTime}}分钟
+            </div>
+          </div>
         </div>
       </div>
       <split></split>
@@ -48,189 +65,220 @@
 </template>
 
 <script>
-  import BScroll from 'better-scroll'
-  import split from '../split/split'
-  import {
-    formatDate
-  } from '../../common/js/date'
-  import ratingselect from '../ratingselect/ratingselect'
+import BScroll from 'better-scroll'
+import split from '../split/split'
+import {
+  formatDate
+} from '../../common/js/date'
+import ratingselect from '../ratingselect/ratingselect'
+import star from '../star/star'
 
-  const ALL = 2
-  const ERR_OK = 0
+const ALL = 2
+const ERR_OK = 0
 
-  export default {
-    props: {
-      seller: {
-        type: Object
+export default {
+  props: {
+    seller: {
+      type: Object
+    }
+  },
+  data() {
+    return {
+      ratings: [],
+      selectType: ALL,
+      onlyContent: true
+    }
+  },
+  methods: {
+    needShow(type, text) {
+      if (this.onlyContent && !text) {
+        return false
+      }
+      if (this.selectType === ALL) {
+        return true
+      } else {
+        return type === this.selectType
       }
     },
-    data() {
-      return {
-        ratings: [],
-        selectType: ALL,
-        onlyContent: true
-      }
-    },
-    methods: {
-      needShow(type, text) {
-        if (this.onlyContent && !text) {
-          return false
-        }
-        if (this.selectType === ALL) {
-          return true
-        } else {
-          return type === this.selectType
-        }
-      },
-      selectRating(type) {
-        this.selectType = type
-        this.$nextTick(() => {
-          this.scroll.refresh()
-        })
-      },
-      toggleContent() {
-        this.onlyContent = !this.onlyContent
-        this.$nextTick(() => {
-          this.scroll.refresh()
-        })
-      }
-    },
-    filters: {
-      formatDate(time) {
-        let date = new Date(time)
-        return formatDate(date, 'yyyy-MM-dd hh:mm')
-      }
-    },
-    created() {
-      this.$http.get('/api/ratings').then((res) => {
-        res = res.body
-        if (res.errno === ERR_OK) {
-          this.ratings = res.data
-          this.$nextTick(() => {
-            this.scroll = new BScroll(this.$refs.ratings, {
-              click: true
-            })
-          })
-        }
+    selectRating(type) {
+      this.selectType = type
+      this.$nextTick(() => {
+        this.scroll.refresh()
       })
     },
-    components: {
-      split,
-      ratingselect
+    toggleContent() {
+      this.onlyContent = !this.onlyContent
+      this.$nextTick(() => {
+        this.scroll.refresh()
+      })
     }
+  },
+  filters: {
+    formatDate(time) {
+      let date = new Date(time)
+      return formatDate(date, 'yyyy-MM-dd hh:mm')
+    }
+  },
+  created() {
+    this.$http.get('/api/ratings').then((res) => {
+      res = res.body
+      if (res.errno === ERR_OK) {
+        this.ratings = res.data
+        this.$nextTick(() => {
+          this.scroll = new BScroll(this.$refs.ratings, {
+            click: true
+          })
+        })
+      }
+    })
+  },
+  components: {
+    split,
+    ratingselect,
+    star
   }
+}
 </script>
 
 <style lang="scss">
-  @import "../../common/style/mixin";
+@import "../../common/style/mixin";
 
-  .ratings {
+.ratings {
     .overview {
-      display: flex;
-      padding: 18px 0;
-      .overview-left {
-        flex: 0 0 137px;
-        padding: 6px 0;
-        width: 137px;
-        border-right: 1px solid rgba(7, 17, 27, 0.1);
-        text-align: center;
-        .score {
-          margin-bottom: 6px;
-          line-height: 28px;
-          font-size: 24px;
-          color: #f90;
-        }
-        .title {
-          margin-bottom: 8px;
-          line-height: 12px;
-          font-size: 12px;
-          color: #07111b;
-        }
-        .rank {
-          line-height: 10px;
-          font-size: 10px;
-          color: #93999f;
-        }
-      }
-      .overview-right {
-        flex: 1;
-        padding: 6px 0 6px 24px;
-      }
-    }
-
-
-    .rating-wrapper {
-      padding: 0 18px;
-      .rating-item {
         display: flex;
         padding: 18px 0;
-        @include border-1px(rgba(7, 17, 27, 0.1));
-        .avatar {
-          flex: 0 0 28px;
-          width: 28px;
-          margin-right: 12px;
-          img {
-            border-radius: 50%;
-          }
+        .overview-left {
+            flex: 0 0 130px;
+            padding: 6px 0;
+            width: 130px;
+            border-right: 1px solid rgba(7, 17, 27, 0.1);
+            text-align: center;
+            .score {
+                margin-bottom: 6px;
+                line-height: 28px;
+                font-size: 24px;
+                color: #f90;
+            }
+            .title {
+                margin-bottom: 8px;
+                line-height: 12px;
+                font-size: 12px;
+                color: #07111b;
+            }
+            .rank {
+                line-height: 10px;
+                font-size: 10px;
+                color: #93999f;
+            }
         }
-        .content {
-          position: relative;
-          flex: 1;
-          .name {
-            margin-bottom: 4px;
-            line-height: 12px;
-            font-size: 10px;
-            color: #07111b;
-          }
-          .star-wrapper {
-            margin-bottom: 6px;
-            font-size: 0;
-            .star {
-              display: inline-block;
-              margin-right: 6px;
-              vertical-align: top;
+        .overview-right {
+            flex: 1;
+            padding: 8px 0 6px 18px;
+            .rate-li {
+                position: relative;
+                display: flex;
+                font-size: 12px;
+                margin-bottom: 12px;
+                &:last-child {
+                    margin-bottom: 0;
+                }
+                .right-label {
+                    flex: 0 0 56px;
+                    width: 56px;
+                }
+                .delivery-time,
+                .star {
+                    position: absolute;
+                    left: 55px;
+                    top: -1px;
+                    flex: 1;
+                    line-height: 10px;
+                    color: #93999f;
+                }
+                .delivery-time {
+                    top: 0;
+                }
+                .text {
+                    color: #f90;
+                    position: absolute;
+                    left: 135px;
+                }
             }
-            .delivery {
-              display: inline-block;
-              vertical-align: top;
-              line-height: 12px;
-              font-size: 10px;
-              color: #93999f;
-            }
-          }
-          .text {
-            margin-bottom: 8px;
-            line-height: 18px;
-            color: #07111b;
-            font-size: 12px;
-          }
-          .recommend {
-            line-height: 16px;
-            font-size: 0;
-            .icon-thumb_up {
-              color: #00a0dc;
-            }
-            .item {
-              padding: 0 6px;
-              border: 1px solid rgba(7, 17, 27, 0.1);
-              border-radius: 1px;
-              color: #93999f;
-              background: #fff;
-              display: inline-block;
-              margin: 0 8px 4px 0;
-              font-size: 9px;
-            }
-          }
-          .time {
-            position: absolute;
-            top: 0;
-            right: 0;
-            line-height: 12px;
-            font-size: 10px;
-            color: #93999f;
-          }
         }
-      }
     }
-  }
+
+    .rating-wrapper {
+        padding: 0 18px;
+        .rating-item {
+            display: flex;
+            padding: 18px 0;
+            @include border-1px(rgba(7, 17, 27, 0.1));
+            .avatar {
+                flex: 0 0 28px;
+                width: 28px;
+                margin-right: 12px;
+                img {
+                    border-radius: 50%;
+                }
+            }
+            .content {
+                position: relative;
+                flex: 1;
+                .name {
+                    margin-bottom: 4px;
+                    line-height: 12px;
+                    font-size: 10px;
+                    color: #07111b;
+                }
+                .star-wrapper {
+                    margin-bottom: 6px;
+                    font-size: 0;
+                    .star {
+                        display: inline-block;
+                        margin-right: 6px;
+                        vertical-align: top;
+                    }
+                    .delivery {
+                        display: inline-block;
+                        vertical-align: top;
+                        line-height: 12px;
+                        font-size: 10px;
+                        color: #93999f;
+                    }
+                }
+                .text {
+                    margin-bottom: 8px;
+                    line-height: 18px;
+                    color: #07111b;
+                    font-size: 12px;
+                }
+                .recommend {
+                    line-height: 16px;
+                    font-size: 0;
+                    .icon-thumb_up {
+                        color: #00a0dc;
+                    }
+                    .item {
+                        padding: 0 6px;
+                        border: 1px solid rgba(7, 17, 27, 0.1);
+                        border-radius: 1px;
+                        color: #93999f;
+                        background: #fff;
+                        display: inline-block;
+                        margin: 0 8px 4px 0;
+                        font-size: 9px;
+                    }
+                }
+                .time {
+                    position: absolute;
+                    top: 0;
+                    right: 0;
+                    line-height: 12px;
+                    font-size: 10px;
+                    color: #93999f;
+                }
+            }
+        }
+    }
+}
 </style>

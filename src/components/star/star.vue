@@ -69,7 +69,7 @@ export default {
             display: inline-block;
             height: 18px;
             width: 18px;
-            margin-left: 12px;
+            margin-left: 4px;
             &:first-child {
                 margin-left: 0;
             }
@@ -89,7 +89,7 @@ export default {
             display: inline-block;
             height: 12px;
             width: 12px;
-            margin-left: 6;
+            margin-left: 3px;
             &:first-child {
                 margin-left: 0;
             }
